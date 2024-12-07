@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie App</title>
+    <!--jQuery-->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.min.js"></script>
+
+    <!--Bootstrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!--VueJS-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+
+    <!--Fontawesome-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="../public/styles/styles.css">
+    <script type="module" defer src="../public/script/scripts.js"></script>
+    <script type="module" src="../public/script/DBprovider.js"></script>
+  
+</head>
+<body>
+  
+  <div id="app">
+    
+    <!-- Header -->
+    <div class="d-flex align-items-center rounded header">
+      <h4>20120319</h4>
+      <h2>Movies Info</h2>
+      <div class="form-check form-switch d-flex justify-content-center">
+        <input 
+          class="form-check-input" 
+          type="checkbox" 
+          id="darkModeSwitch" 
+          v-model="isDarkMode" 
+          @change="toggleTheme">
+        <label 
+          class="form-check-label" 
+          for="darkModeSwitch" 
+          v-html="isDarkMode ? '<i class=\'fa-solid fa-moon\'></i>' : '<i class=\'fa-regular fa-sun\'></i>'">
+        </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="d-flex justify-content-between rounded">
+      <span class="d-flex align-items-center" @click="backToHome"><i class="fa-solid fa-house"></i></span>
+      <div class="inputGroup">
+        <input 
+          type="text" 
+          class="rounded formControl" 
+          id="inputSearch" 
+          placeholder="Search..."
+          v-model="searchText" />
+        <button class="rounded inputGroupSearchIcon" id="searchIcon" @click="handleSearchInput">Search</button>
+      </div>
+    </nav>
+
+    <!-- Loading Spinner -->
+    <div v-if="isLoading" class="loading-spinner">
+      <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+
+    <!--Home-->
+    <div v-if="!isSearchPage && !selectedMovie" class="home-content">
+        <!-- Movies Info -->
+      <div class="movies-section">
+        <div class="position-relative">
+          <!-- Movie Slider Container -->
+          <div id="movieSlider" class="row">
+            <div 
+              class="col-4 slider-item text-center" 
+              v-for="(movie, index) in revenueMovies" 
+              :key="index"
+              @mouseover="hovered = index"
+              @mouseleave="hovered = null"
+              @click="showMovieDetails(movie.id)">
+              <div class="card h-100 justify-content-center">
+                <img :src="movie.image || 'https://via.placeholder.com/150'" alt="Movie Poster" class="card-img-top  rounded">
+                <div class="card-movie-body position-absolute bottom-0 start-0 w-100 text-black p-2">
+                  <h5 class="card-title">
+                    {{ movie.fullTitle }}<br>
+                  </h5>
+                  <h6 class="card-title">
+                    ImDb: {{ movie.ratings.imDb }} - Revenue: {{ movie.revenue }}
+                  </h6>
+                  <h6 class="card-title bonus">
+                    Directors: {{ this.convertListToString(movie.directorList, "name") }} <br> Genre: {{ this.convertListToString(movie.genreList, "value") }}
+                  </h6>
+                </div>
+                      
+                <!-- Progress Bar -->                    
+                <div class="d-flex position-absolute bottom-0 start-0 w-100 justify-content-center align-items-center gap-2 my-3">               
+                  <span                       
+                    v-for="index in totalSlides"                       
+                    :key="index"                       
+                    class="progress-bar-item"                      
+                    :class="{ active: index === currentRevenueMoviePage }">                    
+                  </span>
+                </div>                  
+              </div>              
+            </div>          
+          </div>  
+          
+        <!-- Navigation Buttons -->          
+        <button class="btn position-absolute top-50 start-0 mx-5 translate-middle-y" @click="prevRevMoviesSlide">            
+          <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="btn position-absolute top-50 end-0 mx-5 translate-middle-y" @click="nextRevMoviesSlide">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Slider cho Top Rated -->
+    <movieslider
+      title="Most Popular"
+      sliderId="popularMovieSlider"
+      :movies="popularMovies"
+      @movieselected="showMovieDetails"
+      @prevslide="prevPopularMoviesSlide"
+      @nextslide="nextPopularMoviesSlide"></movieslider>
+
+    <!-- Slider cho Top Rated -->
+    <movieslider
+      title="Top Rated"
+      sliderId="topRatedMovieSlider"
+      :movies="topRatedMovies"
+      @movieselected="showMovieDetails"
+      @prevslide="prevTopRatedMoviesSlide"
+      @nextslide="nextTopRatedMoviesSlide"></movieslider>
+    </div>
+    
+    <!-- Movie Details -->
+    <div v-if="selectedMovie" class="movie-details">
+      <div class="d-flex flex-column align-items-center">
+          <img :src="selectedMovie.image" alt="Movie Poster" class="rounded img-fluid" style="max-width: 300px;">
+          <h3>{{ selectedMovie.title }} ({{ selectedMovie.year }})</h3>
+          <p><strong>Genre:</strong> {{ this.convertListToString(selectedMovie.genreList, "value") }}</p>
+          <p><strong>Director:</strong> {{ this.convertListToString(selectedMovie.directorList, "name") }}</p>
+          <p><strong>Content:</strong> {{ selectedMovie.plot }}</p>
+      </div>
+      <!-- Cast Section -->
+      <div class="cast-session">
+        <h3>Actors List:</h3>
+        <div class="position-relative row">
+          <div 
+            class="col-4 slider-item text-center m-3 popular-item" 
+            v-for="(actor, index) in selectedMovie.actorList" 
+            :key="index"
+            @mouseover="hovered = index"
+            @mouseleave="hovered = null"
+            @click="showActorDetails(actor)">
+            <div class="card h-100 justify-content-center">
+              <img :src="actor.image || 'https://via.placeholder.com/150'" alt="Actor Poster" class="card-img-top  rounded">
+              <div class="card-movie-body position-absolute bottom-0 start-0 w-100 text-black p-2">
+                <h5 class="card-title">
+                  {{ actor.name }}<br>
+                </h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> 
+
+    <!-- Search Details -->
+    <div v-if="isSearchPage && !selectedMovie" class="search-page">
+      <div class="search-results">
+          <h3>Search results for: {{ searchText }}</h3>
+          <div class="position-relative row">
+            <div 
+              class="col-4 slider-item text-center m-3 popular-item" 
+              v-for="(movie, index) in searchResults" 
+              :key="index"
+              @mouseover="hovered = index"
+              @mouseleave="hovered = null"
+              @click="showMovieDetails(movie.id)">
+              <div class="card h-100 justify-content-center">
+                <img :src="movie.image ||'https://via.placeholder.com/150'" alt="Movie Poster" class="card-img-top  rounded">
+                <div class="card-movie-body position-absolute bottom-0 start-0 w-100 text-black p-2">
+                  <h5 class="card-title">
+                    {{ movie.fullTitle }}<br>
+                  </h5>
+                  <h6 class="card-title">
+                    ImDb: {{ movie.ratings.imDb }} - Revenue: {{ movie.revenue }}
+                  </h6>
+                  <h6 class="card-title bonus">
+                    Directors: {{ this.convertListToString(movie.directorList, "name") }} <br> Genre: {{ this.convertListToString(movie.genreList, "value") }}
+                  </h6>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+  
+      <!-- Pagination -->
+      <nav class="pagination-container mt-4">
+          <ul class="pagination justify-content-center">
+              <li class="page-item" :class="{ disabled: currentSearchPage === 1 }">
+                  <button class="page-link" @click="changeSearchPage(currentSearchPage - 1)">Previous</button>
+              </li>
+              <li 
+                  class="page-item" 
+                  v-for="page in totalSearchPages" 
+                  :key="page"
+                  :class="{ active: page === currentSearchPage }">
+                  <button class="page-link" @click="changeSearchPage(page)">{{ page }}</button>
+              </li>
+              <li class="page-item" :class="{ disabled: currentSearchPage === totalSearchPages }">
+                  <button class="page-link" @click="changeSearchPage(currentSearchPage + 1)">Next</button>
+              </li>
+          </ul>
+      </nav>
+    </div>
+    
+    <!-- Footer -->
+    <div class="rounded footer">Copyright by Ⓒ LTCuberik</div>
+  </div>
+
+</body>
+</html>

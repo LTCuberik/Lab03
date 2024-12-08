@@ -1,4 +1,4 @@
-export const dbProvider = {
+const dbProvider = {
     async getAPI(type, clss, pattern = {}) {
         console.log(type,clss);
         const url = `http://matuan.online:2422/api/${clss}`;
@@ -126,3 +126,4 @@ export const dbProvider = {
         return await this.getAPI(type, clss, pattern);
     },
 };
+module.exports = dbProvider;

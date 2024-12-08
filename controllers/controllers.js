@@ -1,9 +1,12 @@
+const { testHtml } = require('../models/models');
 
 const path = require('path');
 
 const showHomePage = (req, res) => {
-    res.sendFile(path.join(__dirname, '../views/index.html'));
+    const html = testHtml();
+    res.send(html);
 };
+
 
 module.exports = {
     showHomePage,

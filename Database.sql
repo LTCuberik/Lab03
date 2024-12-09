@@ -28,9 +28,8 @@ CREATE TABLE s20319."Movie" (
     plot_full TEXT,
     image VARCHAR(255), -- Đường dẫn tới ảnh của bộ phim
     awards VARCHAR(255),
-    director VARCHAR[], -- Danh sách đạo diễn
+    director JSONB, -- Danh sách đạo diễn
     box_office NUMERIC,
-    imdb_rating NUMERIC(3, 1),
     ratings_json JSONB -- Nếu muốn lưu thêm các hệ thống đánh giá như IMDB, RottenTomatoes...
 );
 

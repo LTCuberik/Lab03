@@ -1,5 +1,4 @@
 20319{layout layouts/layout.20319}
-20319{if isHome }
     <!-- Loading Spinner -->
     <div v-if="isLoading" class="loading-spinner">
       <div class="spinner-border" role="status">
@@ -16,7 +15,7 @@
           <div id="movieSlider" class="row">
             <div 
               class="col-4 slider-item text-center" 
-              v-for="(movie, index) in revenueMovies" 
+              v-for="(movie, index) in topRatedMovies" 
               :key="index"
               @mouseover="hovered = index"
               @mouseleave="hovered = null"
@@ -28,10 +27,10 @@
                     {{ movie.fullTitle }}<br>
                   </h5>
                   <h6 class="card-title">
-                    ImDb: {{ movie.ratings.imDb }} - Revenue: {{ movie.revenue }}
+                    ImDb: {{ movie.imDbRating }} - Count: {{ movie.imDbRatingCount }}
                   </h6>
                   <h6 class="card-title bonus">
-                    Directors: {{ this.convertListToString(movie.directorList, "name") }} <br> Genre: {{ this.convertListToString(movie.genreList, "value") }}
+                    Rank: {{ movie.rank }} <br> Crew: {{  movie.crew }}
                   </h6>
                 </div>
                       
@@ -41,7 +40,7 @@
                     v-for="index in totalSlides"                       
                     :key="index"                       
                     class="progress-bar-item"                      
-                    :class="{ active: index === currentRevenueMoviePage }">                    
+                    :class="{ active: index === currentTopRatedMoviePage }">                    
                   </span>
                 </div>                  
               </div>              
@@ -49,39 +48,37 @@
           </div>  
           
         <!-- Navigation Buttons -->          
-        <button class="btn position-absolute top-50 start-0 mx-5 translate-middle-y" @click="prevRevMoviesSlide">            
+        <button class="btn position-absolute top-50 start-0 mx-5 translate-middle-y" @click="prevTopRatedMoviesSlide">            
           <i class="fas fa-chevron-left"></i>
         </button>
-        <button class="btn position-absolute top-50 end-0 mx-5 translate-middle-y" @click="nextRevMoviesSlide">
+        <button class="btn position-absolute top-50 end-0 mx-5 translate-middle-y" @click="nextTopRatedMoviesSlide">
           <i class="fas fa-chevron-right"></i>
         </button>
       </div>
+
+
+          <!-- Slider cho Top Rated -->
+    <movieslider
+      title="Top Box Office"
+      sliderId="topMovieSlider"
+      :movies="revenueMovies"
+      @movieselected="showMovieDetails"
+      @prevslide="prevRevMoviesSlide"
+      @nextslide="nextRevMoviesSlide"></movieslider>
     </div>
+
 
     <!-- Slider cho Top Rated -->
     <movieslider
-      title="Most Popular"
+      title="Top Favorites"
       sliderId="popularMovieSlider"
       :movies="popularMovies"
       @movieselected="showMovieDetails"
       @prevslide="prevPopularMoviesSlide"
       @nextslide="nextPopularMoviesSlide"></movieslider>
 
-    <!-- Slider cho Top Rated -->
-    <movieslider
-      title="Top Rated"
-      sliderId="topRatedMovieSlider"
-      :movies="topRatedMovies"
-      @movieselected="showMovieDetails"
-      @prevslide="prevTopRatedMoviesSlide"
-      @nextslide="nextTopRatedMoviesSlide"></movieslider>
     </div>
-{/if}
-{else}
-    20319{if isMovieDetail}
-        20319{+moviedetail} 
-    {/if}
-    {else}
-        20319{+search}
-    {/if}
-{/if}
+
+
+    20319{+movieDetail}
+    20319{+search}

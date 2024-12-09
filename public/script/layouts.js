@@ -35,7 +35,7 @@ const MovieSlider = {
                 <div class="card-movie-body" v-if="hoveredMovie === index">
                   <h5 class="card-title">{{ movie.fullTitle }}</h5>
                   <p>
-                    <strong>ImDb:</strong> {{ movie.imDbRating }} - 
+                    <strong>ImDb:</strong> {{ movie.imDbRating || movie.ratings.ImDb }} - 
                     <strong>Count:</strong> {{ movie.imDbRatingCount }}
                   </p>
                   <p>
@@ -69,7 +69,7 @@ const app = Vue.createApp({
         return {
             isDarkMode: localStorage.getItem('theme') === 'ligth' || !localStorage.getItem('theme'), 
             currentRevenueMoviePage: 1, 
-            perRevenueMoviePage: 1, 
+            perRevenueMoviePage: 3, 
             hovered: null, 
             revenueMovies: [],
             //
@@ -78,7 +78,7 @@ const app = Vue.createApp({
             popularMovies: [], 
             //
             currentTopRatedMoviePage: 1, 
-            perTopRatedMoviePage: 3, 
+            perTopRatedMoviePage: 1, 
             topRatedMovies: [], 
             //
             selectedMovie: null, 

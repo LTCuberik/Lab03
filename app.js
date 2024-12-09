@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
-const TemplateEngine = require('./TemplateEngine'); // Đường dẫn đến file TemplateEngine.js
+const TemplateEngine = require('./20319'); // Đường dẫn đến file TemplateEngine.js
 
 const app = express();
 const port = 3000;
@@ -14,7 +14,9 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 const partials = {
     header: fs.readFileSync(path.join(__dirname, 'views', 'partials', 'header.20319'), 'utf8'),
     nav: fs.readFileSync(path.join(__dirname, 'views', 'partials', 'nav.20319'), 'utf8'),
-    footer: fs.readFileSync(path.join(__dirname, 'views', 'partials', 'footer.20319'), 'utf8')
+    footer: fs.readFileSync(path.join(__dirname, 'views', 'partials', 'footer.20319'), 'utf8'),
+    movieDetail: fs.readFileSync(path.join(__dirname, 'views', 'movieDetail.20319'), 'utf8'),
+    search: fs.readFileSync(path.join(__dirname, 'views', 'search.20319'), 'utf8')
 };
 
 // Tạo instance của TemplateEngine với partials

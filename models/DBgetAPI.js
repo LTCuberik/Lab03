@@ -1,6 +1,16 @@
 const axios = require('axios'); // Cài đặt axios
 const { addMovie } = require('./MovieHandle'); // Đảm bảo bạn import hàm addMovie từ file MovieHandle.js
 
+function calculateRevenue(boxOffice) {
+  const parseAmount = (amount) => parseInt(amount.replace(/[\$,]/g, "")) || 0; // Loại bỏ ký tự $ và , để chuyển thành số
+  let gross;
+  if (!boxOffice){ return 0 }
+  else {
+    gross = parseAmount(boxOffice.cumulativeWorldwideGross);
+  }
+  return gross;
+}
+
 async function fetchMoviesAndAdd() {
   try {
     // Gửi yêu cầu GET đến API để lấy dữ liệu
@@ -10,19 +20,17 @@ async function fetchMoviesAndAdd() {
     for (const movie of response.data) {
       const movieData = {
         id: movie.id,
-        fullTitle: movie.full_title,
+        fullTitle: movie.fullTitle,
         year: movie.year,
-        releaseDate: movie.release_date,
-        runtimeMins: movie.runtime_mins,
-        plotFull: movie.plot_full,
+        releaseDate: movie.releaseDate,
+        runtimeMins: movie.runtimeMins,
+        plotFull: movie.plotFull,
         image: movie.image,
         awards: movie.awards,
-        director: movie.director,
-        boxOffice: movie.box_office,
-        imdbRating: movie.imdb_rating,
-        ratingsJson: movie.ratings_json
+        director: JSON.stringify(movie.directorList || {}),
+        boxOffice: calculateRevenue(movie.boxOffice),
+        ratingsJson: JSON.stringify(movie.ratings || {})
       };
-
       // Gọi hàm addMovie để thêm bộ phim vào cơ sở dữ liệu
       await addMovie(movieData);
     }
@@ -32,4 +40,7 @@ async function fetchMoviesAndAdd() {
     console.error('Error fetching movies:', err);
   }
 }
-module.exports = { fetchMoviesAndAdd };
+
+
+
+module.exports = { fetchMoviesAndAdd, calculateRevenue};

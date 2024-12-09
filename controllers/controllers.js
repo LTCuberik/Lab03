@@ -1,5 +1,5 @@
 const movieModel = require('../models/models');
-
+const { fetchMoviesAndAdd } = require('../models/DBgetAPI'); 
 // Controller cho trang chi tiết phim
 exports.getMovieDetail = (req, res) => {
     const movieId = req.query.id;
@@ -27,4 +27,18 @@ exports.searchMovies = (req, res) => {
         isMovieDetail: false,
         isSearch: true,
     });
+};
+
+exports.getHomePage = (req, res) => {
+    console.log('Movies added successfully.');
+    res.render('home', {});
+};
+
+exports.getAll = async (req, res) => {
+    try {
+        const data = await movieModel.getAllMovie();
+        res.json(data);
+    } catch (error) {
+        res.status(500).send('Error fetching data: ' + error.message);
+    }
 };

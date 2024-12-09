@@ -40,7 +40,7 @@ class TemplateEngine {
     
         // Xử lý điều kiện {if} với {else}
         template = template.replace(
-            /20319{if (\w+)}([\s\S]*?){\/if}{else}([\s\S]*?){\/if}/g,
+            /20319{if (\w+)}([\s\S]*?){else}([\s\S]*?){\/if}/g,
             (_match, variable, truePart, falsePart) => {
                 return data[variable] ? this.render(truePart, data) : this.render(falsePart, data);
             }

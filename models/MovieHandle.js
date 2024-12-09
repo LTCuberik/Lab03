@@ -1,22 +1,36 @@
 const client = require('./db');
 
 async function addMovie(movie) {
-  const query = `
-    INSERT INTO s20319."Movie" (id, full_title, year, release_date, runtime_mins, plot_full, image, awards, director, box_office, imdb_rating, ratings_json)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-    RETURNING *;
+  const checkQuery = `
+    SELECT 1 FROM s20319."Movie" WHERE id = $1;
   `;
-  const values = [
-    movie.id, movie.fullTitle, movie.year, movie.releaseDate, movie.runtimeMins, movie.plotFull, movie.image, movie.awards, movie.director, movie.boxOffice, movie.imdbRating, movie.ratingsJson
-  ];
+  const checkValues = [movie.id];
 
   try {
+    // Check if the movie ID already exists
+    const checkRes = await client.query(checkQuery, checkValues);
+
+    if (checkRes.rows.length > 0) {
+      console.log('Movie with this ID already exists.');
+      return; // Skip the insert if the movie ID already exists
+    }
+
+    // Proceed with the insertion if the movie ID does not exist
+    const query = `
+      INSERT INTO s20319."Movie" (id, full_title, year, release_date, runtime_mins, plot_full, image, awards, director, box_office, ratings_json)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+      RETURNING *;
+    `;
+    const values = [
+      movie.id, movie.fullTitle, movie.year, movie.releaseDate, movie.runtimeMins, movie.plotFull, movie.image, movie.awards, movie.director, movie.boxOffice, movie.ratingsJson
+    ];
+
     const res = await client.query(query, values);
-    console.log('Movie added:', res.rows[0]);
   } catch (err) {
     console.error('Error adding movie:', err);
   }
 }
+
 
 async function updateMovie(movieId, updatedData) {
     const query = `

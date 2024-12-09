@@ -62,3 +62,4 @@ async function deleteMovie(movieId) {
     }
 }
 
+module.exports = { addMovie };

@@ -1,0 +1,13 @@
+    <!-- Nav -->
+    <nav class="d-flex justify-content-between rounded">
+      <span class="d-flex align-items-center" @click="backToHome"><i class="fa-solid fa-house"></i></span>
+      <div class="inputGroup">
+        <input 
+          type="text" 
+          class="rounded formControl" 
+          id="inputSearch" 
+          placeholder="Search..."
+          v-model="searchText" />
+        <button class="rounded inputGroupSearchIcon" id="searchIcon" @click="handleSearchInput">Search</button>
+      </div>
+    </nav>

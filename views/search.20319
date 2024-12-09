@@ -1,0 +1,50 @@
+    <!-- Search Details -->
+    <div v-if="isSearchPage && !selectedMovie" class="search-page">
+      <div class="search-results">
+          <h3>Search results for: {{ searchText }}</h3>
+          <div class="position-relative row">
+            <div 
+              class="col-4 slider-item text-center m-3 popular-item" 
+              v-for="(movie, index) in searchResults" 
+              :key="index"
+              @mouseover="hovered = index"
+              @mouseleave="hovered = null"
+              @click="showMovieDetails(movie.id)">
+              <div class="card h-100 justify-content-center">
+                <img :src="movie.image ||'https://via.placeholder.com/150'" alt="Movie Poster" class="card-img-top  rounded">
+                <div class="card-movie-body position-absolute bottom-0 start-0 w-100 text-black p-2">
+                  <h5 class="card-title">
+                    {{ movie.fullTitle }}<br>
+                  </h5>
+                  <h6 class="card-title">
+                    ImDb: {{ movie.ratings.imDb }} - Revenue: {{ movie.revenue }}
+                  </h6>
+                  <h6 class="card-title bonus">
+                    Directors: {{ this.convertListToString(movie.directorList, "name") }} <br> Genre: {{ this.convertListToString(movie.genreList, "value") }}
+                  </h6>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+
+      <!-- Pagination -->
+      <nav class="pagination-container mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" :class="{ disabled: currentSearchPage === 1 }">
+                <button class="page-link" @click="changeSearchPage(currentSearchPage - 1)">Previous</button>
+            </li>
+            <li 
+                class="page-item" 
+                v-for="page in totalSearchPages" 
+                :key="page"
+                :class="{ active: page === currentSearchPage }">
+                <button class="page-link" @click="changeSearchPage(page)">{{ page }}</button>
+            </li>
+            <li class="page-item" :class="{ disabled: currentSearchPage === totalSearchPages }">
+                <button class="page-link" @click="changeSearchPage(currentSearchPage + 1)">Next</button>
+            </li>
+        </ul>
+      </nav>
+  
+    </div>      

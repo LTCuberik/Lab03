@@ -1,7 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const controller = require('../controllers/controllers');
+const movieController = require('../controllers/controllers');
 
-router.get('/', controller.showHomePage);
+// Route cho trang chi tiết phim
+router.get('/movies', movieController.getMovieDetail);
+
+// Route cho tìm kiếm phim
+router.get('/searchs', movieController.searchMovies);
 
 module.exports = router;

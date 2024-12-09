@@ -1,0 +1,32 @@
+    <!-- Movie Details -->
+    <div v-if="selectedMovie" class="movie-details">
+      <div class="d-flex flex-column align-items-center">
+          <img :src="selectedMovie.image" alt="Movie Poster" class="rounded img-fluid" style="max-width: 300px;">
+          <h3>{{ selectedMovie.title }} ({{ selectedMovie.year }})</h3>
+          <p><strong>Genre:</strong> {{ this.convertListToString(selectedMovie.genreList, "value") }}</p>
+          <p><strong>Director:</strong> {{ this.convertListToString(selectedMovie.directorList, "name") }}</p>
+          <p><strong>Content:</strong> {{ selectedMovie.plot }}</p>
+      </div>
+      <!-- Cast Section -->
+      <div class="cast-session">
+        <h3>Actors List:</h3>
+        <div class="position-relative row">
+          <div 
+            class="col-4 slider-item text-center m-3 popular-item" 
+            v-for="(actor, index) in selectedMovie.actorList" 
+            :key="index"
+            @mouseover="hovered = index"
+            @mouseleave="hovered = null"
+            @click="showActorDetails(actor)">
+            <div class="card h-100 justify-content-center">
+              <img :src="actor.image || 'https://via.placeholder.com/150'" alt="Actor Poster" class="card-img-top  rounded">
+              <div class="card-movie-body position-absolute bottom-0 start-0 w-100 text-black p-2">
+                <h5 class="card-title">
+                  {{ actor.name }}<br>
+                </h5>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

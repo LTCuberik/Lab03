@@ -7,7 +7,6 @@ async function fetchMoviesAndAdd() {
     const response = await axios.get('http://matuan.online:2422/api/Movies');
     
     // Lặp qua các bộ phim và gọi addMovie để lưu vào cơ sở dữ liệu
-    console.log(response.data);
     for (const movie of response.data) {
       const movieData = {
         id: movie.id,
@@ -33,6 +32,4 @@ async function fetchMoviesAndAdd() {
     console.error('Error fetching movies:', err);
   }
 }
-
-// Gọi hàm fetchMoviesAndAdd để thực hiện
-fetchMoviesAndAdd();
+module.exports = { fetchMoviesAndAdd };

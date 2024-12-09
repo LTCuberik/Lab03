@@ -8,6 +8,6 @@ const client = new Client({
     port: 5433,
 });
 
-client.connect();
+//client.connect();
 
 module.exports = client;
